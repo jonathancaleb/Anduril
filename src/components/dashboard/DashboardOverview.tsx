@@ -14,7 +14,7 @@ export function DashboardOverview() {
   ).length;
   const todoTasks = mockTasks.filter((task) => task.status === "todo").length;
 
-  const completionRate = Math.round((completedTasks / totalTasks) * 100);
+  const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
   const highPriorityTasks = mockTasks.filter(
     (task) => task.priority === "high"
