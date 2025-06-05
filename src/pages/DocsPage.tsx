@@ -12,11 +12,10 @@ const DocsPage: React.FC = () => {
     { id: "features", title: "Features", icon: "⚡" },
     { id: "troubleshooting", title: "Troubleshooting", icon: "🔧" },
   ];
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-rose-100 dark:from-gray-900 dark:via-amber-900/20 dark:to-orange-900/20">
+    <div className="min-h-screen bg-gradient-to-br from-brand-neutral via-brand-primary/5 to-brand-accent/10">
       {/* Work in Progress Banner */}
-      <div className="bg-gradient-to-r from-amber-600 to-orange-600 dark:from-amber-700 dark:to-orange-700 text-white text-center py-4">
+      <div className="bg-gradient-to-r from-brand-primary to-brand-accent text-white text-center py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-sm md:text-base font-medium">
             🔥 Still being forged in the fires of Mt. Doom - Docs will evolve as
@@ -28,7 +27,7 @@ const DocsPage: React.FC = () => {
       <section className="py-16 lg:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-amber-600 to-orange-700 dark:from-amber-500 dark:to-orange-600 rounded-2xl shadow-lg mb-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-brand-primary to-brand-accent rounded-2xl shadow-lg mb-6">
               <svg
                 className="w-8 h-8 text-white"
                 fill="none"
@@ -44,29 +43,26 @@ const DocsPage: React.FC = () => {
               </svg>
             </div>
           </div>
-
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
-            <span className="bg-gradient-to-r from-amber-600 to-orange-600 dark:from-amber-400 dark:to-orange-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-6xl font-bold text-brand-primary mb-6">
+            <span className="bg-gradient-to-r from-brand-primary to-brand-accent bg-clip-text text-transparent">
               Documentation
             </span>
-          </h1>
-
-          <p className="text-xl text-gray-700 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+          </h1>{" "}
+          <p className="text-xl text-brand-neutral-foreground/70 mb-8 max-w-3xl mx-auto leading-relaxed">
             Learn how I'm building Andúril and what I've figured out so far
             about GitHub-integrated productivity tools. This documentation grows
             as the project evolves.
           </p>
-
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <a
               href="#what-is-anduril"
-              className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+              className="bg-gradient-to-r from-brand-primary to-brand-accent hover:from-brand-primary/90 hover:to-brand-accent/90 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
             >
               Start Reading
             </a>
             <Link
               to="/about"
-              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+              className="bg-white border border-brand-primary/20 text-brand-primary hover:bg-brand-primary/5 font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
             >
               Learn My Story
             </Link>
@@ -76,10 +72,11 @@ const DocsPage: React.FC = () => {
       {/* Main Documentation Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
         <div className="flex flex-col lg:flex-row gap-8">
+          {" "}
           {/* Sidebar Navigation */}
           <aside className="lg:w-64 flex-shrink-0">
-            <div className="bg-white dark:bg-gray-800/50 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 sticky top-8">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
+            <div className="bg-white border border-brand-primary/10 rounded-2xl shadow-lg p-6 sticky top-8">
+              <h3 className="text-lg font-semibold text-brand-primary mb-6 flex items-center">
                 <span className="mr-2">📚</span>
                 Table of Contents
               </h3>
@@ -91,8 +88,8 @@ const DocsPage: React.FC = () => {
                     onClick={() => setActiveSection(section.id)}
                     className={`flex items-center py-2 px-3 rounded-lg transition-all duration-200 ${
                       activeSection === section.id
-                        ? "bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-l-2 border-amber-500"
-                        : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/30"
+                        ? "bg-brand-accent/10 text-brand-accent border-l-2 border-brand-accent"
+                        : "text-brand-neutral-foreground/60 hover:text-brand-primary hover:bg-brand-primary/5"
                     }`}
                   >
                     <span className="mr-3 text-sm">{section.icon}</span>
@@ -102,7 +99,6 @@ const DocsPage: React.FC = () => {
               </nav>
             </div>
           </aside>
-
           {/* Main Content */}
           <main className="flex-1">
             <div className="bg-white dark:bg-gray-800/50 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">

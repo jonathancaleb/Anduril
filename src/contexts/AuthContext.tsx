@@ -57,7 +57,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const { error } = await supabase.auth.signOut();
     return { error };
   };
-
   const signInWithGitHub = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "github",
@@ -65,6 +64,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         redirectTo: `${window.location.origin}/dashboard`,
       },
     });
+    return { error };
+  };
+  const updateProfile = async (updates: {
+    email?: string;
+    password?: string;
+    data?: Record<string, unknown>;
+  }) => {
+    const { error } = await supabase.auth.updateUser(updates);
+    return { error };
+  };
+
+  const updatePassword = async (password: string) => {
+    const { error } = await supabase.auth.updateUser({ password });
+    return { error };
+  };
+
+  const updateEmail = async (email: string) => {
+    const { error } = await supabase.auth.updateUser({ email });
+    return { error };
+  };
+
+  const deleteAccount = async () => {
+    // Note: Supabase doesn't have a direct delete user method from client
+    // This would typically be handled by a server-side function
+    // For now, we'll sign out the user and they'd need to contact support
+    const { error } = await supabase.auth.signOut();
     return { error };
   };
 
@@ -76,6 +101,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     signUp,
     signOut,
     signInWithGitHub,
+    updateProfile,
+    updatePassword,
+    updateEmail,
+    deleteAccount,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

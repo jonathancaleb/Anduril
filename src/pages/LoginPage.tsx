@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { useToast } from "../contexts/ToastContext";
+import { getAuthErrorMessage } from "../lib/auth-errors";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const { signIn, signInWithGitHub, user } = useAuth();
+  const { showError, showSuccess } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -19,74 +21,67 @@ const LoginPage: React.FC = () => {
       navigate(from, { replace: true });
     }
   }, [user, navigate, from]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
 
     const { error } = await signIn(email, password);
-
     if (error) {
-      setError(error.message);
+      const { title, description } = getAuthErrorMessage(error.message);
+      showError(title, description);
       setLoading(false);
     } else {
+      showSuccess("Welcome back! You're now signed in.");
       navigate(from, { replace: true });
     }
   };
-
   const handleGitHubLogin = async () => {
     setLoading(true);
-    setError(null);
 
     const { error } = await signInWithGitHub();
 
     if (error) {
-      setError(error.message);
+      const { title, description } = getAuthErrorMessage(error.message);
+      showError(title, description);
       setLoading(false);
     }
     // OAuth will handle the redirect automatically
   };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-rose-100 dark:from-gray-900 dark:via-amber-900/20 dark:to-orange-900/20 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-brand-neutral via-brand-primary/5 to-brand-accent/10 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      {" "}
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-amber-600 to-orange-700 dark:from-amber-500 dark:to-orange-600 rounded-2xl shadow-lg mb-6">
-            <svg
-              className="w-8 h-8 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 10V3L4 14h7v7l9-11h-7z"
-              />
-            </svg>
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Welcome back to <span className="text-amber-600">Andúril</span>
+          <Link to="/" className="inline-block">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-brand-primary to-brand-accent rounded-2xl shadow-lg mb-6 hover:scale-105 transition-transform duration-200 cursor-pointer">
+              <svg
+                className="w-8 h-8 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+            </div>
+          </Link>
+          <h2 className="text-3xl font-bold text-brand-primary">
+            Welcome back to <span className="text-brand-accent">Andúril</span>
           </h2>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+          <p className="mt-2 text-sm text-brand-neutral-foreground/60">
             Sign in to your account to continue your journey
           </p>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 py-8 px-6 shadow-xl rounded-2xl border border-gray-200 dark:border-gray-700">
+        </div>{" "}
+        <div className="bg-white border border-brand-primary/10 py-8 px-6 shadow-xl rounded-2xl backdrop-blur-sm">
           <form className="space-y-6" onSubmit={handleSubmit}>
-            {error && (
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg">
-                {error}
-              </div>
-            )}
-
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                className="block text-sm font-medium text-brand-primary"
               >
                 Email address
               </label>
@@ -99,16 +94,15 @@ const LoginPage: React.FC = () => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-brand-primary/20 rounded-lg placeholder-brand-neutral-foreground/40 focus:outline-none focus:ring-brand-accent focus:border-brand-accent bg-brand-neutral text-brand-neutral-foreground sm:text-sm"
                   placeholder="Enter your email"
                 />
               </div>
             </div>
-
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                className="block text-sm font-medium text-brand-primary"
               >
                 Password
               </label>
@@ -121,17 +115,16 @@ const LoginPage: React.FC = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-brand-primary/20 rounded-lg placeholder-brand-neutral-foreground/40 focus:outline-none focus:ring-brand-accent focus:border-brand-accent bg-brand-neutral text-brand-neutral-foreground sm:text-sm"
                   placeholder="Enter your password"
                 />
               </div>
-            </div>
-
+            </div>{" "}
             <div>
               <button
                 type="submit"
                 disabled={loading}
-                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-brand-accent-foreground bg-brand-accent hover:bg-brand-accent/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105"
               >
                 {loading ? (
                   <div className="flex items-center">
@@ -143,24 +136,22 @@ const LoginPage: React.FC = () => {
                 )}
               </button>
             </div>
-
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300 dark:border-gray-600" />
+                <div className="w-full border-t border-brand-primary/20" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">
+                <span className="px-2 bg-white text-brand-neutral-foreground/60">
                   Or continue with
                 </span>
               </div>
             </div>
-
             <div>
               <button
                 type="button"
                 onClick={handleGitHubLogin}
                 disabled={loading}
-                className="w-full inline-flex justify-center py-3 px-4 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                className="w-full inline-flex justify-center py-3 px-4 border border-brand-primary/20 rounded-lg shadow-sm bg-brand-neutral text-sm font-medium text-brand-neutral-foreground hover:bg-brand-primary/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
               >
                 <svg
                   className="w-5 h-5 mr-2"
@@ -172,14 +163,13 @@ const LoginPage: React.FC = () => {
                 Sign in with GitHub
               </button>
             </div>
-          </form>
-
+          </form>{" "}
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-brand-neutral-foreground/60">
               Don't have an account?{" "}
               <Link
                 to="/register"
-                className="font-medium text-amber-600 hover:text-amber-500 transition-colors"
+                className="font-medium text-brand-accent hover:text-brand-accent/80 transition-colors"
               >
                 Create one here
               </Link>
