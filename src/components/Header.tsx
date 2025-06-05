@@ -1,11 +1,17 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const Header: React.FC = () => {
   const location = useLocation();
+  const { user, signOut } = useAuth();
 
   const isActive = (path: string) => {
     return location.pathname === path;
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
   };
 
   return (
@@ -20,10 +26,9 @@ const Header: React.FC = () => {
             >
               Anduril
             </Link>
-          </div>
-
+          </div>{" "}
           {/* Navigation */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex items-center space-x-8">
             <Link
               to="/"
               className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -54,8 +59,43 @@ const Header: React.FC = () => {
             >
               Docs
             </Link>
-          </nav>
 
+            {user ? (
+              <>
+                <Link
+                  to="/dashboard"
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive("/dashboard")
+                      ? "text-amber-600 bg-amber-50"
+                      : "text-gray-700 hover:text-gray-900"
+                  }`}
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={handleSignOut}
+                  className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg transition-all duration-200"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/register"
+                  className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 rounded-lg transition-all duration-200"
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
+          </nav>
           {/* Mobile menu button */}
           <div className="md:hidden">
             <button className="text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900">

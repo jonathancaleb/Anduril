@@ -1,6 +1,14 @@
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "../components/Layout";
-import { HomePage, AboutPage, DocsPage } from "../pages";
+import ProtectedRoute from "../components/ProtectedRoute";
+import {
+  HomePage,
+  AboutPage,
+  DocsPage,
+  LoginPage,
+  RegisterPage,
+  DashboardPage,
+} from "../pages";
 
 export const router = createBrowserRouter([
   {
@@ -25,6 +33,24 @@ export const router = createBrowserRouter([
       <Layout>
         <DocsPage />
       </Layout>
+    ),
+  },
+  {
+    path: "/login",
+    element: <LoginPage />,
+  },
+  {
+    path: "/register",
+    element: <RegisterPage />,
+  },
+  {
+    path: "/dashboard",
+    element: (
+      <ProtectedRoute>
+        <Layout>
+          <DashboardPage />
+        </Layout>
+      </ProtectedRoute>
     ),
   },
 ]);

@@ -1,7 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const HomePage: React.FC = () => {
+  const { user } = useAuth();
+
   return (
     <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-rose-100 dark:from-gray-900 dark:via-amber-900/20 dark:to-orange-900/20 min-h-screen">
       {/* Hero Section */}
@@ -46,11 +49,23 @@ const HomePage: React.FC = () => {
               magic works. Still forging this in the fires of Mt. Doom, learning
               from the best tools out there, one experiment at a time 🌋"
             </p>
-          </div>
+          </div>{" "}
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16">
-            <button className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
-              Join the Journey
-            </button>
+            {user ? (
+              <Link
+                to="/dashboard"
+                className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl inline-block"
+              >
+                Go to Dashboard
+              </Link>
+            ) : (
+              <Link
+                to="/register"
+                className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl inline-block"
+              >
+                Join the Journey
+              </Link>
+            )}
             <Link
               to="/docs"
               className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 font-semibold py-4 px-8 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl inline-block"
@@ -196,11 +211,23 @@ const HomePage: React.FC = () => {
             This is still very much a work in progress, but I'm building it in
             public. Follow along as I figure out what actually makes developers
             more productive.
-          </p>
+          </p>{" "}
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <button className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
-              Follow the Journey
-            </button>
+            {user ? (
+              <Link
+                to="/dashboard"
+                className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl inline-block"
+              >
+                Go to Dashboard
+              </Link>
+            ) : (
+              <Link
+                to="/register"
+                className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl inline-block"
+              >
+                Follow the Journey
+              </Link>
+            )}
             <Link
               to="/about"
               className="bg-gray-800 hover:bg-gray-700 text-white border border-gray-700 hover:border-gray-600 font-semibold py-4 px-8 rounded-xl transition-all duration-200 inline-block"
