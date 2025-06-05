@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Menu, Bell, Search, User, Settings, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { LogoutConfirmationDialog } from "@/components/ui/logout-confirmation-dialog";
 
 interface TopNavigationProps {
   onToggleSidebar: () => void;
@@ -22,14 +23,8 @@ export function TopNavigation({
   onToggleSidebar,
   sidebarCollapsed,
 }: TopNavigationProps) {
-  const { user, signOut } = useAuth();
-
-  const handleSignOut = async () => {
-    const { error } = await signOut();
-    if (error) {
-      console.error("Error signing out:", error.message);
-    }
-  };
+  const { user } = useAuth();
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
   const userName = user?.user_metadata?.name || user?.user_metadata?.full_name;
   const userAvatar = user?.user_metadata?.avatar_url;
@@ -128,7 +123,7 @@ export function TopNavigation({
             <div className="p-2">
               <p className="text-sm font-medium">{userName || user?.email}</p>
               <p className="text-xs text-muted-foreground">{user?.email}</p>
-            </div>
+            </div>{" "}
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <User className="mr-2 h-4 w-4" />
@@ -140,7 +135,7 @@ export function TopNavigation({
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={handleSignOut}
+              onClick={() => setShowLogoutDialog(true)}
               className="text-red-600 focus:text-red-600"
             >
               <LogOut className="mr-2 h-4 w-4" />
@@ -148,6 +143,11 @@ export function TopNavigation({
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <LogoutConfirmationDialog
+          open={showLogoutDialog}
+          onOpenChange={setShowLogoutDialog}
+        />
       </div>
     </header>
   );

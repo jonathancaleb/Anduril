@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { useToast } from "../contexts/ToastContext";
+import { getAuthErrorMessage } from "../lib/auth-errors";
 
 const RegisterPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
   const { signUp, signInWithGitHub, user } = useAuth();
+  const { showError, showSuccess } = useToast();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,43 +20,42 @@ const RegisterPage: React.FC = () => {
       navigate("/dashboard", { replace: true });
     }
   }, [user, navigate]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      showError("Passwords do not match");
       setLoading(false);
       return;
     }
 
     if (password.length < 6) {
-      setError("Password must be at least 6 characters long");
+      showError("Password must be at least 6 characters long");
       setLoading(false);
       return;
     }
 
     const { error } = await signUp(email, password);
-
     if (error) {
-      setError(error.message);
+      const { title, description } = getAuthErrorMessage(error.message);
+      showError(title, description);
       setLoading(false);
     } else {
+      showSuccess(
+        "Registration successful! Check your email for confirmation."
+      );
       setSuccess(true);
       setLoading(false);
     }
   };
-
   const handleGitHubSignup = async () => {
     setLoading(true);
-    setError(null);
 
     const { error } = await signInWithGitHub();
-
     if (error) {
-      setError(error.message);
+      const { title, description } = getAuthErrorMessage(error.message);
+      showError(title, description);
       setLoading(false);
     }
     // OAuth will handle the redirect automatically
@@ -136,16 +137,9 @@ const RegisterPage: React.FC = () => {
           <p className="mt-2 text-sm text-brand-neutral-foreground/60">
             Create your account to start building better productivity
           </p>
-        </div>
-
+        </div>{" "}
         <div className="bg-white border border-brand-primary/10 py-8 px-6 shadow-xl rounded-2xl backdrop-blur-sm">
           <form className="space-y-6" onSubmit={handleSubmit}>
-            {" "}
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                {error}
-              </div>
-            )}
             <div>
               <label
                 htmlFor="email"

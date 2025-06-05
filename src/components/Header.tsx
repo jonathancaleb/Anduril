@@ -1,18 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { ThemeToggle } from "./ThemeToggle";
+import { LogoutConfirmationDialog } from "./ui/logout-confirmation-dialog";
 
 const Header: React.FC = () => {
   const location = useLocation();
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
   const isActive = (path: string) => {
     return location.pathname === path;
-  };
-
-  const handleSignOut = async () => {
-    await signOut();
   };
   return (
     <header className="bg-brand-neutral border-b border-brand-primary/10">
@@ -71,9 +69,9 @@ const Header: React.FC = () => {
                 >
                   Dashboard
                 </Link>
-                <ThemeToggle />
+                <ThemeToggle />{" "}
                 <button
-                  onClick={handleSignOut}
+                  onClick={() => setShowLogoutDialog(true)}
                   className="px-4 py-2 text-sm font-medium text-brand-neutral-foreground/70 hover:text-brand-primary border border-brand-primary/20 rounded-lg transition-all duration-200"
                 >
                   Sign Out
@@ -118,6 +116,11 @@ const Header: React.FC = () => {
           </div>{" "}
         </div>
       </div>
+
+      <LogoutConfirmationDialog
+        open={showLogoutDialog}
+        onOpenChange={setShowLogoutDialog}
+      />
     </header>
   );
 };

@@ -12,6 +12,8 @@ import {
   LogOut,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useState } from "react";
+import { LogoutConfirmationDialog } from "@/components/ui/logout-confirmation-dialog";
 
 interface SidebarProps {
   collapsed?: boolean;
@@ -60,14 +62,8 @@ export function Sidebar({
   onNavigate,
   currentPage,
 }: SidebarProps) {
-  const { user, signOut } = useAuth();
-
-  const handleSignOut = async () => {
-    const { error } = await signOut();
-    if (error) {
-      console.error("Error signing out:", error.message);
-    }
-  };
+  const { user } = useAuth();
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   return (
     <div
       className={cn(
@@ -157,19 +153,22 @@ export function Sidebar({
               {user.email}
             </p>
           </div>
-        )}
-
+        )}{" "}
         <Button
           variant="ghost"
           className={cn(
             "w-full justify-start text-brand-neutral-foreground/60 hover:text-brand-neutral-foreground hover:bg-brand-accent/20",
             collapsed ? "px-2" : "px-3"
           )}
-          onClick={handleSignOut}
+          onClick={() => setShowLogoutDialog(true)}
         >
           <LogOut className={cn("h-4 w-4", collapsed ? "mr-0" : "mr-2")} />
           {!collapsed && <span>Sign Out</span>}
         </Button>
+        <LogoutConfirmationDialog
+          open={showLogoutDialog}
+          onOpenChange={setShowLogoutDialog}
+        />
       </div>
     </div>
   );

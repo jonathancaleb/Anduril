@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { useToast } from "../contexts/ToastContext";
+import { getAuthErrorMessage } from "../lib/auth-errors";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const { signIn, signInWithGitHub, user } = useAuth();
+  const { showError, showSuccess } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -19,30 +21,28 @@ const LoginPage: React.FC = () => {
       navigate(from, { replace: true });
     }
   }, [user, navigate, from]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
 
     const { error } = await signIn(email, password);
-
     if (error) {
-      setError(error.message);
+      const { title, description } = getAuthErrorMessage(error.message);
+      showError(title, description);
       setLoading(false);
     } else {
+      showSuccess("Welcome back! You're now signed in.");
       navigate(from, { replace: true });
     }
   };
-
   const handleGitHubLogin = async () => {
     setLoading(true);
-    setError(null);
 
     const { error } = await signInWithGitHub();
 
     if (error) {
-      setError(error.message);
+      const { title, description } = getAuthErrorMessage(error.message);
+      showError(title, description);
       setLoading(false);
     }
     // OAuth will handle the redirect automatically
@@ -75,16 +75,9 @@ const LoginPage: React.FC = () => {
           <p className="mt-2 text-sm text-brand-neutral-foreground/60">
             Sign in to your account to continue your journey
           </p>
-        </div>
-
+        </div>{" "}
         <div className="bg-white border border-brand-primary/10 py-8 px-6 shadow-xl rounded-2xl backdrop-blur-sm">
           <form className="space-y-6" onSubmit={handleSubmit}>
-            {" "}
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                {error}
-              </div>
-            )}
             <div>
               <label
                 htmlFor="email"

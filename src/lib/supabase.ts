@@ -14,6 +14,9 @@ interface MockSupabaseClient {
       options: unknown
     ) => Promise<{ data: unknown; error: AuthError | null }>;
     signOut: () => Promise<{ error: AuthError | null }>;
+    updateUser: (
+      updates: unknown
+    ) => Promise<{ data: unknown; error: AuthError | null }>;
     getSession: () => Promise<{
       data: { session: Session | null };
       error: AuthError | null;
@@ -69,7 +72,6 @@ if (
     error.status = 500;
     return error;
   };
-
   supabaseClient = {
     auth: {
       signUp: () =>
@@ -88,6 +90,11 @@ if (
           error: createMockAuthError("Supabase not configured"),
         }),
       signOut: () => Promise.resolve({ error: null }),
+      updateUser: () =>
+        Promise.resolve({
+          data: null,
+          error: createMockAuthError("Supabase not configured"),
+        }),
       getSession: () =>
         Promise.resolve({ data: { session: null }, error: null }),
       onAuthStateChange: () => ({

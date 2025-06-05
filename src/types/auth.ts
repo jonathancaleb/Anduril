@@ -14,4 +14,12 @@ export interface AuthContextType {
   ) => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<{ error: AuthError | null }>;
   signInWithGitHub: () => Promise<{ error: AuthError | null }>;
+  updateProfile: (updates: {
+    email?: string;
+    password?: string;
+    data?: Record<string, unknown>;
+  }) => Promise<{ error: AuthError | null }>;
+  updatePassword: (password: string) => Promise<{ error: AuthError | null }>;
+  updateEmail: (email: string) => Promise<{ error: AuthError | null }>;
+  deleteAccount: () => Promise<{ error: AuthError | null }>;
 }
