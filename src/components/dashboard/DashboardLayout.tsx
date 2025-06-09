@@ -2,19 +2,27 @@ import { useState } from "react";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Sidebar } from "./Sidebar";
 import { TopNavigation } from "./TopNavigation";
-import { DashboardOverview } from "./DashboardOverview";
+import { ProductivityDashboard } from "./ProductivityDashboard";
 import { KanbanBoard } from "./KanbanBoard";
 import { CalendarView } from "./CalendarView";
 import { ProjectsView } from "./ProjectsView";
+import { NotesView } from "./NotesView";
+import { GoalsView } from "./GoalsView";
+import { FocusView } from "./FocusView";
+import { JournalView } from "./JournalView";
 import { ProfileView } from "./ProfileView";
 import { SettingsView } from "./SettingsView";
 import type { Task } from "@/lib/data";
 
 type DashboardPage =
   | "overview"
-  | "tasks"
-  | "calendar"
   | "projects"
+  | "tasks"
+  | "notes"
+  | "goals"
+  | "focus"
+  | "calendar"
+  | "journal"
   | "profile"
   | "settings";
 
@@ -22,7 +30,6 @@ export function DashboardLayout() {
   const [currentPage, setCurrentPage] = useState<DashboardPage>("overview");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-
   const handleNavigate = (page: string) => {
     setCurrentPage(page as DashboardPage);
     setMobileSidebarOpen(false); // Close mobile sidebar when navigating
@@ -46,11 +53,12 @@ export function DashboardLayout() {
     console.log("Delete task:", taskId);
     // TODO: Implement task deletion with confirmation
   };
-
   const renderCurrentPage = () => {
     switch (currentPage) {
       case "overview":
-        return <DashboardOverview />;
+        return <ProductivityDashboard />;
+      case "projects":
+        return <ProjectsView />;
       case "tasks":
         return (
           <KanbanBoard
@@ -59,61 +67,63 @@ export function DashboardLayout() {
             onDeleteTask={handleDeleteTask}
           />
         );
+      case "notes":
+        return <NotesView />;
+      case "goals":
+        return <GoalsView />;
+      case "focus":
+        return <FocusView />;
       case "calendar":
         return <CalendarView />;
-      case "projects":
-        return <ProjectsView />;
+      case "journal":
+        return <JournalView />;
       case "profile":
         return <ProfileView />;
       case "settings":
         return <SettingsView />;
       default:
-        return <DashboardOverview />;
+        return <ProductivityDashboard />;
     }
   };
   return (
-    <div className="h-screen flex bg-brand-neutral">
-      {/* Desktop Sidebar */}
-      <div
-        className={`hidden lg:flex ${
-          sidebarCollapsed ? "w-16" : "w-64"
-        } transition-all duration-300`}
-      >
-        <Sidebar
-          collapsed={sidebarCollapsed}
-          onNavigate={handleNavigate}
-          currentPage={currentPage}
-        />
-      </div>
+    <div className="h-screen flex flex-col bg-background">
+      {/* Top Navigation */}
+      <TopNavigation
+        onToggleSidebar={toggleSidebar}
+        onOpenMobileSidebar={() => setMobileSidebarOpen(true)}
+        sidebarCollapsed={sidebarCollapsed}
+      />
 
-      {/* Mobile Sidebar */}
-      <Sheet open={mobileSidebarOpen} onOpenChange={setMobileSidebarOpen}>
-        <SheetContent side="left" className="p-0 w-64">
+      <div className="flex flex-1 overflow-hidden">
+        {/* Desktop Sidebar */}
+        <div
+          className={`hidden lg:flex ${
+            sidebarCollapsed ? "w-16" : "w-64"
+          } transition-all duration-300`}
+        >
+          {" "}
           <Sidebar
-            collapsed={false}
+            collapsed={sidebarCollapsed}
             onNavigate={handleNavigate}
             currentPage={currentPage}
           />
-        </SheetContent>
-      </Sheet>
+        </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Navigation */}
-        <TopNavigation
-          onToggleSidebar={() => {
-            // On mobile, open sheet; on desktop, toggle collapsed state
-            if (window.innerWidth < 1024) {
-              setMobileSidebarOpen(true);
-            } else {
-              toggleSidebar();
-            }
-          }}
-          sidebarCollapsed={sidebarCollapsed}
-        />
+        {/* Mobile Sidebar */}
+        <Sheet open={mobileSidebarOpen} onOpenChange={setMobileSidebarOpen}>
+          <SheetContent side="left" className="p-0 w-64">
+            <Sidebar
+              collapsed={false}
+              onNavigate={handleNavigate}
+              currentPage={currentPage}
+            />
+          </SheetContent>
+        </Sheet>
 
-        {/* Page Content */}
-        <main className="flex-1 overflow-auto">{renderCurrentPage()}</main>
+        {/* Main Content */}
+        <div className="flex-1 overflow-hidden">
+          <main className="h-full overflow-auto">{renderCurrentPage()}</main>
+        </div>
       </div>
     </div>
   );
